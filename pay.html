@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Оплата — RentAMac</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0d0d0f; --bg2: #141417; --bg3: #1c1c21;
+      --border: #2a2a32; --accent: #f5820d; --accent-hover: #ff9a2e;
+      --text: #e8e8ed; --text-muted: #888899; --text-dim: #555566;
+      --green: #30d158; --red: #ff453a;
+      --radius: 14px; --radius-sm: 8px;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+      font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased;
+      min-height: 100vh; display: flex; flex-direction: column;
+    }
+    /* NAV */
+    nav {
+      background: var(--bg2); border-bottom: 1px solid var(--border);
+      padding: 0 24px; height: 56px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { font-size: 17px; font-weight: 700; color: var(--text); text-decoration: none; }
+    .nav-logo span { color: var(--accent); }
+    .nav-back { font-size: 13px; color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+    .nav-back:hover { color: var(--text); }
+
+    /* LAYOUT */
+    .pay-wrap {
+      flex: 1; display: flex; align-items: flex-start; justify-content: center;
+      padding: 40px 24px 60px; gap: 32px; flex-wrap: wrap;
+    }
+    .pay-form-col { width: 100%; max-width: 480px; }
+    .pay-summary-col { width: 100%; max-width: 320px; }
+
+    /* CARD */
+    .card {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 32px;
+    }
+    .card h2 { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 6px; }
+    .card .subtitle { font-size: 14px; color: var(--text-muted); margin-bottom: 28px; }
+
+    /* PLAN SELECTOR */
+    .plan-selector { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+    .plan-option { display: none; }
+    .plan-label {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--bg3); border: 2px solid var(--border);
+      border-radius: var(--radius-sm); padding: 14px 16px;
+      cursor: pointer; transition: border-color 0.2s, background 0.2s;
+    }
+    .plan-option:checked + .plan-label {
+      border-color: var(--accent);
+      background: rgba(245,130,13,0.07);
+    }
+    .plan-label-left { display: flex; flex-direction: column; }
+    .plan-label-name { font-size: 15px; font-weight: 700; color: var(--text); }
+    .plan-label-desc { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+    .plan-label-price { font-size: 16px; font-weight: 800; color: var(--text); }
+
+    /* FORM */
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .form-group input, .form-group select {
+      width: 100%; background: var(--bg3); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); color: var(--text); font-size: 15px;
+      padding: 11px 14px; outline: none; transition: border-color 0.2s; font-family: inherit;
+    }
+    .form-group input:focus, .form-group select:focus { border-color: var(--accent); }
+
+    /* VAT BREAKDOWN */
+    .vat-box {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 16px;
+      margin: 20px 0;
+    }
+    .vat-row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; padding: 5px 0; }
+    .vat-row.total { font-weight: 800; font-size: 16px; border-top: 1px solid var(--border); margin-top: 8px; padding-top: 12px; color: var(--text); }
+    .vat-row span:first-child { color: var(--text-muted); }
+    .vat-label-small { font-size: 11px; color: var(--text-dim); margin-top: 8px; }
+
+    /* YUKASSA WIDGET PLACEHOLDER */
+    .yukassa-widget-placeholder {
+      background: var(--bg3); border: 2px dashed var(--border);
+      border-radius: var(--radius-sm); padding: 28px 20px;
+      text-align: center; margin: 20px 0;
+    }
+    .yukassa-widget-placeholder .placeholder-icon { font-size: 32px; margin-bottom: 10px; }
+    .yukassa-widget-placeholder p { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+    .yukassa-widget-placeholder code {
+      display: inline-block; background: var(--bg); border: 1px solid var(--border);
+      border-radius: 4px; padding: 2px 7px; font-size: 12px; color: var(--accent);
+      margin-top: 8px;
+    }
+
+    .btn-pay {
+      width: 100%; padding: 15px; background: var(--accent); color: #fff; border: none;
+      border-radius: var(--radius-sm); font-size: 16px; font-weight: 700;
+      cursor: pointer; transition: all 0.2s; font-family: inherit;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn-pay:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(245,130,13,0.35); }
+
+    .pay-disclaimer { font-size: 11px; color: var(--text-dim); text-align: center; margin-top: 12px; line-height: 1.6; }
+    .pay-disclaimer a { color: var(--text-muted); }
+
+    /* SUMMARY CARD */
+    .summary-item { display: flex; justify-content: space-between; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid var(--border); gap: 8px; }
+    .summary-item:last-of-type { border-bottom: none; }
+    .summary-item-label { font-size: 13px; color: var(--text-muted); }
+    .summary-item-value { font-size: 13px; color: var(--text); font-weight: 600; text-align: right; }
+    .badge-green { display: inline-block; background: rgba(48,209,88,0.12); color: var(--green); font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; }
+
+    /* SETUP GUIDE */
+    .setup-guide { margin-top: 24px; }
+    .setup-guide h3 { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px; }
+    .setup-step { display: flex; gap: 12px; margin-bottom: 14px; align-items: flex-start; }
+    .step-num {
+      width: 22px; height: 22px; border-radius: 50%; background: var(--accent);
+      color: #fff; font-size: 11px; font-weight: 800; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; margin-top: 1px;
+    }
+    .setup-step p { font-size: 13px; color: var(--text-muted); line-height: 1.55; }
+    .setup-step a { color: var(--accent); text-decoration: none; }
+    .setup-step a:hover { text-decoration: underline; }
+    .setup-step code {
+      display: inline-block; background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 4px; padding: 1px 6px; font-size: 11px; color: var(--text);
+    }
+
+    footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 20px 24px; text-align: center; }
+    footer p { font-size: 12px; color: var(--text-dim); }
+    footer a { color: var(--text-muted); text-decoration: none; }
+
+    @media (max-width: 600px) {
+      .pay-wrap { padding: 24px 16px 40px; }
+      .card { padding: 22px 18px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">Rent<span>A</span>Mac</a>
+  <a href="/" class="nav-back">← Назад</a>
+</nav>
+
+<div class="pay-wrap">
+
+  <!-- FORM -->
+  <div class="pay-form-col">
+    <div class="card">
+      <h2>Оплата аренды</h2>
+      <p class="subtitle">ЮKassa — банковские карты, СБП, ЮMoney, МИР</p>
+
+      <!-- PLAN SELECTION -->
+      <div class="plan-selector" id="planSelector">
+        <input type="radio" name="plan" id="plan-starter" value="starter" class="plan-option">
+        <label for="plan-starter" class="plan-label">
+          <div class="plan-label-left">
+            <span class="plan-label-name">Starter</span>
+            <span class="plan-label-desc">Mac mini M2 · 8 ГБ · 100 ГБ SSD</span>
+          </div>
+          <span class="plan-label-price">1 500 ₽</span>
+        </label>
+
+        <input type="radio" name="plan" id="plan-developer" value="developer" class="plan-option" checked>
+        <label for="plan-developer" class="plan-label">
+          <div class="plan-label-left">
+            <span class="plan-label-name">Developer ★</span>
+            <span class="plan-label-desc">Mac mini M2 · 16 ГБ · 256 ГБ SSD</span>
+          </div>
+          <span class="plan-label-price">2 900 ₽</span>
+        </label>
+
+        <input type="radio" name="plan" id="plan-pro" value="pro" class="plan-option">
+        <label for="plan-pro" class="plan-label">
+          <div class="plan-label-left">
+            <span class="plan-label-name">Pro</span>
+            <span class="plan-label-desc">Mac mini M2 Max · 32 ГБ · 512 ГБ SSD</span>
+          </div>
+          <span class="plan-label-price">4 900 ₽</span>
+        </label>
+      </div>
+
+      <!-- PERSONAL DATA -->
+      <div class="form-group">
+        <label for="fullname">Имя / Название организации</label>
+        <input type="text" id="fullname" placeholder="Иван Петров или ООО Рога и Копыта" required>
+      </div>
+      <div class="form-group">
+        <label for="email">Email для чека и доступа</label>
+        <input type="email" id="email" placeholder="ivan@example.com" required>
+      </div>
+      <div class="form-group">
+        <label for="telegram">Telegram (необязательно)</label>
+        <input type="text" id="telegram" placeholder="@username">
+      </div>
+
+      <!-- VAT BREAKDOWN -->
+      <div class="vat-box" id="vatBox">
+        <div class="vat-row">
+          <span>Сумма без НДС</span>
+          <span id="vatBase">—</span>
+        </div>
+        <div class="vat-row">
+          <span>НДС 22%</span>
+          <span id="vatAmount">—</span>
+        </div>
+        <div class="vat-row total">
+          <span>Итого к оплате</span>
+          <span id="vatTotal">—</span>
+        </div>
+        <p class="vat-label-small">НДС 22% — ставка действует с 01.01.2026 (Федеральный закон № 176-ФЗ). Чек ОФД будет направлен на email.</p>
+      </div>
+
+      <!--
+        ====================================================
+        ЮKassa WIDGET — ИНТЕГРАЦИЯ
+        ====================================================
+        1. Зарегистрируйтесь на https://yookassa.ru/
+        2. Создайте магазин, получите shopId и secretKey
+        3. В личном кабинете: Интеграция → HTTP API
+        4. Подключите онлайн-кассу (54-ФЗ):
+           — В ЛК выберите "Фискализация" → подключите кассу
+           — Или используйте кассу ЮKassa (встроенная)
+        5. Подключите скрипт виджета (пример ниже):
+           <script src="https://yookassa.ru/checkout-widget/v1/checkout-widget.js"></script>
+        6. Создайте платёж через ваш backend (POST /v3/payments),
+           получите confirmation.confirmation_token
+        7. Инициализируйте виджет:
+           const checkout = new window.YooMoneyCheckoutWidget({
+             confirmation_token: '<TOKEN_FROM_BACKEND>',
+             return_url: 'https://rentamac.ru/pay/success',
+             customization: { colors: { controlPrimary: '#f5820d' } },
+             error_callback(error) { console.error(error); }
+           });
+           checkout.render('payment-form');
+        ====================================================
+      -->
+      <div class="yukassa-widget-placeholder">
+        <div class="placeholder-icon">🏦</div>
+        <p><strong>Здесь появится виджет ЮKassa</strong></p>
+        <p>После создания платежа через backend и получения <code>confirmation_token</code> — виджет рендерится в этом блоке.</p>
+      </div>
+      <div id="payment-form"></div>
+
+      <button class="btn-pay" onclick="initPayment()">
+        <span>🔒</span> Оплатить через ЮKassa
+      </button>
+      <p class="pay-disclaimer">
+        Оплата защищена ЮKassa. Чек будет направлен на email в соответствии с 54-ФЗ.
+        Нажимая кнопку, вы принимаете <a href="#">публичную оферту</a>.
+        ООО «RentAMac», НДС 22% включён в стоимость.
+      </p>
+    </div>
+  </div>
+
+  <!-- SUMMARY + SETUP GUIDE -->
+  <div class="pay-summary-col">
+    <div class="card">
+      <h2 style="font-size:16px;margin-bottom:20px;">Детали заказа</h2>
+      <div class="summary-item">
+        <span class="summary-item-label">Сервис</span>
+        <span class="summary-item-value">RentAMac — аренда Mac mini</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-item-label">Период</span>
+        <span class="summary-item-value">1 месяц (автопродление)</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-item-label">НДС</span>
+        <span class="summary-item-value"><span class="badge-green">22%</span> включён</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-item-label">Оплата</span>
+        <span class="summary-item-value">ЮKassa (карты, СБП, МИР)</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-item-label">Фискализация</span>
+        <span class="summary-item-value">Чек ОФД по 54-ФЗ</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-item-label">Доступ</span>
+        <span class="summary-item-value">SSH-ключи на email в течение 15 минут</span>
+      </div>
+    </div>
+
+    <!-- SETUP GUIDE FOR DEVELOPERS -->
+    <div class="card" style="margin-top:16px;">
+      <div class="setup-guide">
+        <h3>Инструкция по подключению ЮKassa</h3>
+
+        <div class="setup-step">
+          <div class="step-num">1</div>
+          <p>Зарегистрируйтесь на <a href="https://yookassa.ru" target="_blank">yookassa.ru</a> → создайте магазин → получите <code>shopId</code> и <code>secretKey</code> в разделе «Интеграция».</p>
+        </div>
+
+        <div class="setup-step">
+          <div class="step-num">2</div>
+          <p>Для соответствия <strong>54-ФЗ</strong> в ЛК включите «Фискализация» → подключите встроенную кассу ЮKassa или укажите вашу кассу (АТОЛ, Эвотор и др.).</p>
+        </div>
+
+        <div class="setup-step">
+          <div class="step-num">3</div>
+          <p>На бэкенде создайте платёж: <code>POST https://api.yookassa.ru/v3/payments</code> — в ответе получите <code>confirmation_token</code>.</p>
+        </div>
+
+        <div class="setup-step">
+          <div class="step-num">4</div>
+          <p>Подключите виджет:<br><code>&lt;script src="checkout-widget.js"&gt;</code><br>Инициализируйте с токеном — виджет сам соберёт платёжные данные.</p>
+        </div>
+
+        <div class="setup-step">
+          <div class="step-num">5</div>
+          <p>Настройте webhook в ЛК ЮKassa: укажите URL <code>/webhook/yukassa</code> вашего сервера. Обработчик: <code>webhook-yukassa.js</code>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <p>© 2026 RentAMac. ООО на ОСНО. Все цены включают НДС 22%. <a href="/">На главную</a></p>
+</footer>
+
+<script>
+  const PLANS = {
+    starter:   { name: 'Starter',   total: 1500 },
+    developer: { name: 'Developer', total: 2900 },
+    pro:       { name: 'Pro',       total: 4900 },
+  };
+
+  function getSelectedPlan() {
+    return document.querySelector('input[name="plan"]:checked')?.value || 'developer';
+  }
+
+  function updateVat() {
+    const plan = PLANS[getSelectedPlan()];
+    if (!plan) return;
+    // НДС 22%: сумма без НДС = total / 1.22, НДС = total - base
+    const total = plan.total;
+    const base = Math.round(total / 1.22);
+    const vat = total - base;
+    document.getElementById('vatBase').textContent   = base.toLocaleString('ru-RU') + ' ₽';
+    document.getElementById('vatAmount').textContent = vat.toLocaleString('ru-RU') + ' ₽';
+    document.getElementById('vatTotal').textContent  = total.toLocaleString('ru-RU') + ' ₽';
+  }
+
+  document.querySelectorAll('input[name="plan"]').forEach(r => r.addEventListener('change', updateVat));
+  updateVat();
+
+  // Pre-select plan from URL
+  const params = new URLSearchParams(location.search);
+  const urlPlan = params.get('plan');
+  if (urlPlan && PLANS[urlPlan]) {
+    const radio = document.getElementById('plan-' + urlPlan);
+    if (radio) { radio.checked = true; updateVat(); }
+  }
+
+  function initPayment() {
+    const plan = getSelectedPlan();
+    const email = document.getElementById('email').value;
+    if (!email) { alert('Пожалуйста, укажите email.'); return; }
+
+    // TODO: вызвать ваш backend POST /api/create-payment
+    // Получить confirmation_token и инициализировать YooMoneyCheckoutWidget
+    alert(
+      'Backend не подключён.\n\n' +
+      'Следующий шаг: создайте платёж на сервере через ЮKassa API,\n' +
+      'получите confirmation_token и инициализируйте виджет.\n\n' +
+      'Смотри: backend/webhook-yukassa.js'
+    );
+  }
+</script>
+</body>
+</html>

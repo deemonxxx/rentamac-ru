@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RentAMac — Аренда Mac mini для разработчиков</title>
+  <meta name="description" content="Аренда Mac mini в облаке. Для iOS/macOS разработчиков, DevOps и стартапов. Настоящий Apple Silicon, без переплат.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0d0f;
+      --bg2: #141417;
+      --bg3: #1c1c21;
+      --border: #2a2a32;
+      --accent: #f5820d;
+      --accent-hover: #ff9a2e;
+      --text: #e8e8ed;
+      --text-muted: #888899;
+      --text-dim: #555566;
+      --green: #30d158;
+      --radius: 14px;
+      --radius-sm: 8px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(13,13,15,0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      font-size: 18px; font-weight: 700; color: var(--text);
+      text-decoration: none; letter-spacing: -0.3px;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a {
+      color: var(--text-muted); text-decoration: none; font-size: 14px;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      background: var(--accent); color: #fff; border: none;
+      padding: 8px 18px; border-radius: 8px; font-size: 14px; font-weight: 600;
+      cursor: pointer; text-decoration: none; transition: background 0.2s;
+    }
+    .nav-cta:hover { background: var(--accent-hover); }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center;
+      padding: 120px 24px 80px;
+      background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(245,130,13,0.12) 0%, transparent 65%);
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(245,130,13,0.1); border: 1px solid rgba(245,130,13,0.25);
+      color: var(--accent); font-size: 13px; font-weight: 600;
+      padding: 5px 14px; border-radius: 20px; margin-bottom: 28px;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .hero-badge::before { content: '●'; font-size: 8px; animation: blink 2s infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    h1 {
+      font-size: clamp(36px, 6vw, 72px);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -2px;
+      margin-bottom: 24px;
+      color: var(--text);
+    }
+    h1 em { color: var(--accent); font-style: normal; }
+
+    .hero-sub {
+      font-size: clamp(16px, 2.5vw, 20px);
+      color: var(--text-muted);
+      max-width: 580px;
+      margin: 0 auto 40px;
+      line-height: 1.6;
+    }
+
+    .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff; border: none;
+      padding: 14px 32px; border-radius: 10px;
+      font-size: 16px; font-weight: 700;
+      cursor: pointer; text-decoration: none;
+      transition: all 0.2s;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(245,130,13,0.35); }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text); border: 1px solid var(--border);
+      padding: 14px 32px; border-radius: 10px;
+      font-size: 16px; font-weight: 600;
+      cursor: pointer; text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover { border-color: var(--text-muted); background: var(--bg3); }
+
+    .hero-stats {
+      display: flex; gap: 48px; margin-top: 64px;
+      flex-wrap: wrap; justify-content: center;
+    }
+    .stat { text-align: center; }
+    .stat-value { font-size: 28px; font-weight: 800; color: var(--text); letter-spacing: -1px; }
+    .stat-label { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+
+    /* SECTIONS */
+    section { padding: 80px 24px; }
+    .container { max-width: 1100px; margin: 0 auto; }
+
+    .section-label {
+      font-size: 13px; font-weight: 700; color: var(--accent);
+      text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;
+    }
+    h2 {
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 800; letter-spacing: -1px;
+      color: var(--text); margin-bottom: 16px;
+      line-height: 1.15;
+    }
+    .section-sub {
+      font-size: 18px; color: var(--text-muted); max-width: 520px;
+      margin-bottom: 56px;
+    }
+
+    /* FEATURES */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 20px;
+    }
+    .feature-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 24px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .feature-card:hover { border-color: rgba(245,130,13,0.35); transform: translateY(-2px); }
+    .feature-icon { font-size: 28px; margin-bottom: 14px; }
+    .feature-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+    .feature-card p { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
+
+    /* PRICING */
+    #pricing { background: var(--bg2); }
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      align-items: start;
+    }
+    .plan {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px 28px;
+      position: relative;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .plan:hover { transform: translateY(-3px); }
+    .plan.popular {
+      border-color: var(--accent);
+      background: linear-gradient(135deg, rgba(245,130,13,0.06) 0%, var(--bg) 60%);
+    }
+    .plan-badge {
+      position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+      background: var(--accent); color: #fff;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+      padding: 4px 14px; border-radius: 20px; text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .plan-name { font-size: 14px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .plan-price {
+      font-size: 46px; font-weight: 800; color: var(--text);
+      letter-spacing: -2px; line-height: 1; margin-bottom: 4px;
+    }
+    .plan-price sup { font-size: 22px; vertical-align: super; letter-spacing: 0; font-weight: 700; }
+    .plan-period { font-size: 14px; color: var(--text-muted); }
+    .plan-vat { font-size: 12px; color: var(--text-dim); margin-top: 4px; margin-bottom: 20px; }
+
+    .plan-divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+    .plan-features { list-style: none; margin-bottom: 28px; }
+    .plan-features li {
+      font-size: 14px; color: var(--text-muted);
+      padding: 7px 0;
+      display: flex; align-items: flex-start; gap: 10px;
+    }
+    .plan-features li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+    .plan-features li.dim { color: var(--text-dim); }
+    .plan-features li.dim::before { content: '–'; color: var(--text-dim); }
+
+    .plan-btn {
+      display: block; width: 100%; text-align: center;
+      padding: 13px; border-radius: var(--radius-sm);
+      font-size: 15px; font-weight: 700;
+      text-decoration: none; cursor: pointer; border: none;
+      transition: all 0.2s;
+    }
+    .plan-btn-primary { background: var(--accent); color: #fff; }
+    .plan-btn-primary:hover { background: var(--accent-hover); box-shadow: 0 4px 16px rgba(245,130,13,0.4); }
+    .plan-btn-secondary { background: var(--bg3); color: var(--text); border: 1px solid var(--border); }
+    .plan-btn-secondary:hover { border-color: var(--text-muted); }
+
+    .vat-note {
+      text-align: center; margin-top: 24px;
+      font-size: 13px; color: var(--text-dim);
+    }
+
+    /* INCLUDES */
+    .includes-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .include-item {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 20px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .include-icon { font-size: 24px; flex-shrink: 0; }
+    .include-item h4 { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+    .include-item p { font-size: 13px; color: var(--text-muted); }
+
+    /* FAQ */
+    #faq { background: var(--bg2); }
+    .faq-list { max-width: 720px; }
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+    }
+    .faq-q {
+      width: 100%; background: none; border: none;
+      color: var(--text); font-size: 16px; font-weight: 600;
+      text-align: left; padding: 20px 0;
+      cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    }
+    .faq-q span.arrow {
+      flex-shrink: 0; color: var(--text-muted); font-size: 18px;
+      transition: transform 0.2s;
+    }
+    .faq-item.open .faq-q span.arrow { transform: rotate(45deg); }
+    .faq-a {
+      color: var(--text-muted); font-size: 15px;
+      line-height: 1.65; max-height: 0; overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s;
+    }
+    .faq-item.open .faq-a { max-height: 300px; padding-bottom: 20px; }
+
+    /* ORDER FORM */
+    #order { background: var(--bg); }
+    .form-wrap {
+      max-width: 520px;
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 40px;
+    }
+    .form-wrap h3 { font-size: 24px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.5px; }
+    .form-wrap p { font-size: 14px; color: var(--text-muted); margin-bottom: 28px; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; }
+    .form-group select,
+    .form-group input,
+    .form-group textarea {
+      width: 100%; background: var(--bg3);
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      color: var(--text); font-size: 15px;
+      padding: 11px 14px; outline: none;
+      transition: border-color 0.2s;
+      font-family: inherit;
+    }
+    .form-group select:focus,
+    .form-group input:focus,
+    .form-group textarea:focus { border-color: var(--accent); }
+    .form-group textarea { resize: vertical; min-height: 80px; }
+    .form-submit {
+      width: 100%; padding: 14px;
+      background: var(--accent); color: #fff; border: none;
+      border-radius: var(--radius-sm); font-size: 16px; font-weight: 700;
+      cursor: pointer; margin-top: 8px; transition: all 0.2s;
+    }
+    .form-submit:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(245,130,13,0.35); }
+    .form-note { font-size: 12px; color: var(--text-dim); text-align: center; margin-top: 12px; }
+    .form-note a { color: var(--text-muted); }
+
+    /* FOOTER */
+    footer {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      padding: 40px 24px;
+    }
+    .footer-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: flex; justify-content: space-between; align-items: center; gap: 20px;
+      flex-wrap: wrap;
+    }
+    .footer-logo { font-size: 16px; font-weight: 700; color: var(--text); }
+    .footer-logo span { color: var(--accent); }
+    .footer-links { display: flex; gap: 24px; flex-wrap: wrap; }
+    .footer-links a { font-size: 13px; color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--text); }
+    .footer-copy { font-size: 12px; color: var(--text-dim); }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      nav .nav-links { display: none; }
+      .includes-grid { grid-template-columns: 1fr; }
+      .hero-stats { gap: 28px; }
+      .form-wrap { padding: 28px 20px; }
+      .footer-inner { flex-direction: column; text-align: center; }
+    }
+    @media (max-width: 480px) {
+      .pricing-grid { grid-template-columns: 1fr; }
+      .hero-actions { flex-direction: column; align-items: center; }
+      .btn-primary, .btn-secondary { width: 100%; text-align: center; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">Rent<span>A</span>Mac</a>
+  <ul class="nav-links">
+    <li><a href="#features">Возможности</a></li>
+    <li><a href="#pricing">Тарифы</a></li>
+    <li><a href="#includes">Что включено</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ul>
+  <a href="#order" class="nav-cta">Начать →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">🟢 Доступно сейчас — есть свободные машины</div>
+  <h1>Mac mini<br>в аренду для<br><em>разработчиков</em></h1>
+  <p class="hero-sub">
+    Настоящий Apple Silicon. Нативная сборка iOS и macOS приложений,
+    Xcode CI/CD, Fastlane — без покупки железа.
+  </p>
+  <div class="hero-actions">
+    <a href="#pricing" class="btn-primary">Смотреть тарифы →</a>
+    <a href="https://t.me/x100blockchain" target="_blank" class="btn-secondary">💬 Написать в Telegram</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-value">3–4</div>
+      <div class="stat-label">машины в кластере</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">Apple M2</div>
+      <div class="stat-label">процессор</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">99%</div>
+      <div class="stat-label">uptime</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">24/7</div>
+      <div class="stat-label">поддержка</div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="container">
+    <div class="section-label">Возможности</div>
+    <h2>Всё, что нужно<br>iOS/macOS разработчику</h2>
+    <p class="section-sub">Реальное железо Apple — не эмуляторы, не виртуалки.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🍎</div>
+        <h3>Настоящий Apple Silicon</h3>
+        <p>Mac mini M2. Нативная сборка под ARM. Xcode работает как на вашем MacBook.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>SSH-доступ</h3>
+        <p>Полный root-доступ по SSH. Устанавливайте любые инструменты, настраивайте как хотите.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔄</div>
+        <h3>CI/CD из коробки</h3>
+        <p>GitHub Actions, GitLab CI, Fastlane — подключайте прямо к вашему репозиторию.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🛡️</div>
+        <h3>Изолированная среда</h3>
+        <p>Ваш Mac mini — только ваш. Отдельный пользователь, изолированное окружение.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📦</div>
+        <h3>Homebrew и инструменты</h3>
+        <p>Все популярные инструменты уже установлены или устанавливаются в 1 минуту.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🇷🇺</div>
+        <h3>Поддержка на русском</h3>
+        <p>Оплата в рублях через ЮKassa. Ответим в Telegram быстро.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="container">
+    <div class="section-label">Тарифы</div>
+    <h2>Простые и честные цены</h2>
+    <p class="section-sub">Без скрытых платежей. Все цены указаны с НДС 22%.</p>
+    <div class="pricing-grid">
+
+      <!-- STARTER -->
+      <div class="plan">
+        <div class="plan-name">Starter</div>
+        <div class="plan-price"><sup>₽</sup>1 500</div>
+        <div class="plan-period">в месяц</div>
+        <div class="plan-vat">в т. ч. НДС 22% — 270 ₽</div>
+        <hr class="plan-divider">
+        <ul class="plan-features">
+          <li>Mac mini M2, 8 ГБ RAM</li>
+          <li>100 ГБ SSD</li>
+          <li>SSH-доступ</li>
+          <li>1 активный пользователь</li>
+          <li>100 Мбит/с канал</li>
+          <li class="dim">GitHub Actions runner</li>
+          <li class="dim">Снапшоты</li>
+          <li class="dim">Приоритетная поддержка</li>
+        </ul>
+        <a href="/pay?plan=starter" class="plan-btn plan-btn-secondary">Выбрать Starter</a>
+      </div>
+
+      <!-- DEVELOPER (popular) -->
+      <div class="plan popular">
+        <div class="plan-badge">★ Популярный</div>
+        <div class="plan-name">Developer</div>
+        <div class="plan-price"><sup>₽</sup>2 900</div>
+        <div class="plan-period">в месяц</div>
+        <div class="plan-vat">в т. ч. НДС 22% — 521 ₽</div>
+        <hr class="plan-divider">
+        <ul class="plan-features">
+          <li>Mac mini M2, 16 ГБ RAM</li>
+          <li>256 ГБ SSD</li>
+          <li>SSH-доступ</li>
+          <li>2 активных пользователя</li>
+          <li>300 Мбит/с канал</li>
+          <li>GitHub Actions runner</li>
+          <li>Еженедельные снапшоты</li>
+          <li class="dim">Приоритетная поддержка</li>
+        </ul>
+        <a href="/pay?plan=developer" class="plan-btn plan-btn-primary">Выбрать Developer</a>
+      </div>
+
+      <!-- PRO -->
+      <div class="plan">
+        <div class="plan-name">Pro</div>
+        <div class="plan-price"><sup>₽</sup>4 900</div>
+        <div class="plan-period">в месяц</div>
+        <div class="plan-vat">в т. ч. НДС 22% — 882 ₽</div>
+        <hr class="plan-divider">
+        <ul class="plan-features">
+          <li>Mac mini M2 Max, 32 ГБ RAM</li>
+          <li>512 ГБ SSD</li>
+          <li>SSH + VNC-доступ</li>
+          <li>5 активных пользователей</li>
+          <li>1 Гбит/с канал</li>
+          <li>GitHub/GitLab runner</li>
+          <li>Ежедневные снапшоты</li>
+          <li>Приоритетная поддержка 24/7</li>
+        </ul>
+        <a href="/pay?plan=pro" class="plan-btn plan-btn-secondary">Выбрать Pro</a>
+      </div>
+
+    </div>
+    <p class="vat-note">Все цены указаны с учётом НДС 22% (ставка с 01.01.2026). Организациям — закроем документами (акт, счёт-фактура).</p>
+  </div>
+</section>
+
+<!-- INCLUDES -->
+<section id="includes">
+  <div class="container">
+    <div class="section-label">Что включено</div>
+    <h2>Никаких сюрпризов</h2>
+    <p class="section-sub">Всё необходимое входит в тариф.</p>
+    <div class="includes-grid">
+      <div class="include-item">
+        <div class="include-icon">🔑</div>
+        <div>
+          <h4>SSH-доступ за 5 минут</h4>
+          <p>После оплаты получаете данные подключения. Сразу к работе.</p>
+        </div>
+      </div>
+      <div class="include-item">
+        <div class="include-icon">📱</div>
+        <div>
+          <h4>Xcode и Apple Tools</h4>
+          <p>Последняя версия Xcode, Command Line Tools, симуляторы.</p>
+        </div>
+      </div>
+      <div class="include-item">
+        <div class="include-icon">🌐</div>
+        <div>
+          <h4>Статический IP</h4>
+          <p>Фиксированный IP-адрес в комплекте с тарифом.</p>
+        </div>
+      </div>
+      <div class="include-item">
+        <div class="include-icon">💾</div>
+        <div>
+          <h4>Резервные копии</h4>
+          <p>Автоматические снапшоты (на тарифах Developer и Pro).</p>
+        </div>
+      </div>
+      <div class="include-item">
+        <div class="include-icon">⚙️</div>
+        <div>
+          <h4>Управление через панель</h4>
+          <p>Перезагрузка, мониторинг нагрузки, логи — в Telegram-боте.</p>
+        </div>
+      </div>
+      <div class="include-item">
+        <div class="include-icon">📄</div>
+        <div>
+          <h4>Закрывающие документы</h4>
+          <p>Акт, счёт, счёт-фактура с НДС для юрлиц и ИП.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="container">
+    <div class="section-label">FAQ</div>
+    <h2>Частые вопросы</h2>
+    <div class="faq-list">
+
+      <div class="faq-item">
+        <button class="faq-q">Как быстро я получу доступ?<span class="arrow">+</span></button>
+        <div class="faq-a">После подтверждения оплаты мы настраиваем вашу среду и отправляем SSH-ключи в течение 5–15 минут. Обычно быстрее.</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">Могу ли я установить своё ПО?<span class="arrow">+</span></button>
+        <div class="faq-a">Да. Вы получаете доступ с правами администратора к своему выделенному пользователю. Homebrew, CocoaPods, Fastlane, Node.js — всё что угодно.</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">Какая гарантия uptime?<span class="arrow">+</span></button>
+        <div class="faq-a">Мы стремимся к 99% аптайму. Кластер работает на домашнем подключении с ИБП. В случае технических проблем — продлеваем аренду бесплатно или возвращаем деньги за простой.</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">Можно ли использовать для Xcode Cloud / TestFlight?<span class="arrow">+</span></button>
+        <div class="faq-a">Да. Mac mini подходит для настройки собственного CI/CD, сборки и подписи приложений. Для Xcode Cloud нужен Apple Developer аккаунт — он не включён в аренду.</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">Как оплатить? Принимаете ли карты?<span class="arrow">+</span></button>
+        <div class="faq-a">Оплата через ЮKassa — банковские карты Visa, Mastercard, МИР, СБП, ЮMoney. Для юрлиц — выставляем счёт с НДС.</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">Нужен ли мне Apple Developer аккаунт?<span class="arrow">+</span></button>
+        <div class="faq-a">Для сборки приложений и их подписи — да, ваш собственный. Мы предоставляем только вычислительные ресурсы Mac mini.</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">Можно ли отменить подписку?<span class="arrow">+</span></button>
+        <div class="faq-a">Конечно. Напишите в Telegram до следующего списания — мы отменим подписку без штрафов. Данные хранятся 3 дня после отключения.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ORDER FORM -->
+<section id="order">
+  <div class="container">
+    <div class="section-label">Начать</div>
+    <h2>Оставьте заявку</h2>
+    <p style="color:var(--text-muted);margin-bottom:32px;">Ответим в течение 15 минут в рабочее время.</p>
+    <div class="form-wrap">
+      <h3>Заявка на аренду</h3>
+      <p>Выберите тариф — мы свяжемся и оформим доступ.</p>
+      <form action="/pay" method="get">
+        <div class="form-group">
+          <label for="plan">Тариф</label>
+          <select name="plan" id="plan" required>
+            <option value="">— Выберите тариф —</option>
+            <option value="starter">Starter — 1 500 ₽/мес (с НДС)</option>
+            <option value="developer">Developer — 2 900 ₽/мес (с НДС)</option>
+            <option value="pro">Pro — 4 900 ₽/мес (с НДС)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="name">Имя</label>
+          <input type="text" id="name" name="name" placeholder="Иван Петров" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="ivan@example.com" required>
+        </div>
+        <div class="form-group">
+          <label for="telegram">Telegram (для связи)</label>
+          <input type="text" id="telegram" name="telegram" placeholder="@username">
+        </div>
+        <div class="form-group">
+          <label for="comment">Комментарий (необязательно)</label>
+          <textarea id="comment" name="comment" placeholder="Расскажите о задаче — подберём оптимальную конфигурацию"></textarea>
+        </div>
+        <button type="submit" class="form-submit">Перейти к оплате →</button>
+        <p class="form-note">Нажимая кнопку, вы соглашаетесь с <a href="#">условиями оферты</a>. Оплата через ЮKassa. Чек будет направлен на email в соответствии с 54-ФЗ. НДС 22%.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">Rent<span>A</span>Mac <span style="color:var(--text-dim);font-weight:400;font-size:13px">— rentamac.ru</span></div>
+    <div class="footer-links">
+      <a href="#">Оферта</a>
+      <a href="#">Политика конфиденциальности</a>
+      <a href="https://t.me/x100blockchain" target="_blank">Telegram поддержка</a>
+      <a href="https://rentamac.pro" target="_blank">🇺🇸 English version</a>
+    </div>
+    <div class="footer-copy">© 2026 RentAMac. ООО на ОСНО. Все цены с НДС 22%.</div>
+  </div>
+</footer>
+
+<script>
+  // FAQ accordion
+  document.querySelectorAll('.faq-q').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item');
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    });
+  });
+
+  // Pre-select plan from URL hash
+  const params = new URLSearchParams(location.search);
+  if (params.get('plan')) {
+    document.getElementById('plan').value = params.get('plan');
+  }
+</script>
+</body>
+</html>
