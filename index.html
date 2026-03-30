@@ -361,6 +361,9 @@
     Настоящий Apple Silicon M4. Нативная сборка iOS и macOS приложений,
     Xcode CI/CD, AI-агенты, OpenClaw — без покупки железа.
   </p>
+  <div style="display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(99,102,241,0.15),rgba(245,130,13,0.1));border:1px solid rgba(99,102,241,0.35);border-radius:12px;padding:10px 20px;margin-bottom:32px;font-size:14px;font-weight:600;color:#c7d2fe;">
+    🤖 AI-ready: Apple Silicon M4 идеально для запуска OpenClaw, Ollama и локальных AI-моделей
+  </div>
   <div class="hero-actions">
     <a href="#pricing" class="btn-primary">Смотреть тарифы →</a>
     <a href="https://t.me/x100blockchain" target="_blank" class="btn-secondary">💬 Написать в Telegram</a>
@@ -422,6 +425,11 @@
         <h3>Поддержка на русском</h3>
         <p>Оплата в рублях через ЮKassa. Ответим в Telegram быстро.</p>
       </div>
+      <div class="feature-card" style="border-color:rgba(99,102,241,0.3);background:linear-gradient(135deg,rgba(99,102,241,0.07),var(--bg2));">
+        <div class="feature-icon">🤖</div>
+        <h3>AI & OpenClaw</h3>
+        <p>Mac mini M4 — идеальная платформа для локальных AI-агентов. Запускайте OpenClaw, Ollama, LLaMA 3, Mistral прямо на Apple Silicon.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -437,9 +445,9 @@
       <!-- МЕСЯЧНЫЙ -->
       <div class="plan">
         <div class="plan-name">Месячный</div>
-        <div class="plan-price"><sup>₽</sup>3 900</div>
+        <div class="plan-price"><sup>₽</sup>4 290</div>
         <div class="plan-period">в месяц</div>
-        <div class="plan-vat">в т. ч. НДС 22% — 700 ₽</div>
+        <div class="plan-vat">в т. ч. НДС 22%</div>
         <hr class="plan-divider">
         <ul class="plan-features">
           <li>Mac mini M4, 16 ГБ RAM</li>
@@ -456,9 +464,9 @@
       <div class="plan popular">
         <div class="plan-badge">🔥 Выгоднее всего</div>
         <div class="plan-name">Годовой</div>
-        <div class="plan-price"><sup>₽</sup>3 120</div>
-        <div class="plan-period">в месяц · 37 440 ₽/год</div>
-        <div class="plan-vat">скидка 20% · в т. ч. НДС 22%</div>
+        <div class="plan-price"><sup>₽</sup>3 647</div>
+        <div class="plan-period">в месяц · 43 760 ₽/год</div>
+        <div class="plan-vat">скидка 15% · в т. ч. НДС 22%</div>
         <hr class="plan-divider">
         <ul class="plan-features">
           <li>Mac mini M4, 16 ГБ RAM</li>
@@ -466,7 +474,7 @@
           <li>SSH + VNC-доступ</li>
           <li>GitHub Actions runner</li>
           <li>Поддержка в Telegram</li>
-          <li>Экономия 9 360 ₽ в год</li>
+          <li>Экономия 7 720 ₽ в год</li>
         </ul>
         <a href="/pay?plan=annual" class="plan-btn plan-btn-primary">Выбрать →</a>
       </div>
@@ -474,9 +482,9 @@
       <!-- СУТОЧНЫЙ -->
       <div class="plan">
         <div class="plan-name">Суточный</div>
-        <div class="plan-price"><sup>₽</sup>169</div>
+        <div class="plan-price"><sup>₽</sup>186</div>
         <div class="plan-period">в сутки</div>
-        <div class="plan-vat">в т. ч. НДС 22% — 30 ₽</div>
+        <div class="plan-vat">в т. ч. НДС 22%</div>
         <hr class="plan-divider">
         <ul class="plan-features">
           <li>Mac mini M4, 16 ГБ RAM</li>
@@ -492,8 +500,8 @@
       <!-- ПОЧАСОВОЙ -->
       <div class="plan">
         <div class="plan-name">Почасовой</div>
-        <div class="plan-price"><sup>₽</sup>9</div>
-        <div class="plan-period">в час · мин. 4 часа (36 ₽)</div>
+        <div class="plan-price"><sup>₽</sup>10</div>
+        <div class="plan-period">в час · мин. 4 часа (40 ₽)</div>
         <div class="plan-vat">в т. ч. НДС 22% · для DevOps</div>
         <hr class="plan-divider">
         <ul class="plan-features">
@@ -607,6 +615,11 @@
         <div class="faq-a">Конечно. Напишите в Telegram до следующего списания — мы отменим подписку без штрафов. Данные хранятся 3 дня после отключения.</div>
       </div>
 
+      <div class="faq-item">
+        <button class="faq-q">Могу ли я запустить OpenClaw или AI-модели?<span class="arrow">+</span></button>
+        <div class="faq-a">Да. Mac mini M4 с 16 ГБ RAM отлично справляется с моделями до 13B параметров (LLaMA 3, Mistral, Gemma). OpenClaw устанавливается стандартным способом. Homebrew, Ollama — всё работает нативно на Apple Silicon.</div>
+      </div>
+
     </div>
   </div>
 </section>
@@ -625,10 +638,10 @@
           <label for="plan">Тариф</label>
           <select name="plan" id="plan" required>
             <option value="">— Выберите тариф —</option>
-            <option value="monthly">Месячный — 3 900 ₽/мес (с НДС)</option>
-            <option value="annual">Годовой — 37 440 ₽/год (3 120 ₽/мес, -20%)</option>
-            <option value="daily">Суточный — 169 ₽/сут (с НДС)</option>
-            <option value="hourly">Почасовой — 9 ₽/час, мин. 4 часа</option>
+            <option value="monthly">Месячный — 4 290 ₽/мес (с НДС)</option>
+            <option value="annual">Годовой — 43 760 ₽/год (3 647 ₽/мес, -15%)</option>
+            <option value="daily">Суточный — 186 ₽/сут (с НДС)</option>
+            <option value="hourly">Почасовой — 10 ₽/час, мин. 4 часа (40 ₽)</option>
           </select>
         </div>
         <div class="form-group">
