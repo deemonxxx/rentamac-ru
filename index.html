@@ -358,8 +358,8 @@
   <div class="hero-badge">🟢 Доступно сейчас — есть свободные машины</div>
   <h1>Mac mini<br>в аренду для<br><em>разработчиков</em></h1>
   <p class="hero-sub">
-    Настоящий Apple Silicon. Нативная сборка iOS и macOS приложений,
-    Xcode CI/CD, Fastlane — без покупки железа.
+    Настоящий Apple Silicon M4. Нативная сборка iOS и macOS приложений,
+    Xcode CI/CD, AI-агенты, OpenClaw — без покупки железа.
   </p>
   <div class="hero-actions">
     <a href="#pricing" class="btn-primary">Смотреть тарифы →</a>
@@ -371,7 +371,7 @@
       <div class="stat-label">машины в кластере</div>
     </div>
     <div class="stat">
-      <div class="stat-value">Apple M2</div>
+      <div class="stat-value">Apple M4</div>
       <div class="stat-label">процессор</div>
     </div>
     <div class="stat">
@@ -395,7 +395,7 @@
       <div class="feature-card">
         <div class="feature-icon">🍎</div>
         <h3>Настоящий Apple Silicon</h3>
-        <p>Mac mini M2. Нативная сборка под ARM. Xcode работает как на вашем MacBook.</p>
+        <p>Mac mini M4 (16 ГБ, 256 ГБ SSD). Нативная сборка под ARM. Xcode работает как на вашем MacBook.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">⚡</div>
@@ -431,68 +431,80 @@
   <div class="container">
     <div class="section-label">Тарифы</div>
     <h2>Простые и честные цены</h2>
-    <p class="section-sub">Без скрытых платежей. Все цены указаны с НДС 22%.</p>
-    <div class="pricing-grid">
+    <p class="section-sub">Одна конфигурация — Mac mini M4, 16 ГБ, 256 ГБ SSD. Выберите удобный формат оплаты. Все цены с НДС 22%.</p>
+    <div class="pricing-grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));">
 
-      <!-- STARTER -->
+      <!-- МЕСЯЧНЫЙ -->
       <div class="plan">
-        <div class="plan-name">Starter</div>
-        <div class="plan-price"><sup>₽</sup>1 500</div>
+        <div class="plan-name">Месячный</div>
+        <div class="plan-price"><sup>₽</sup>3 900</div>
         <div class="plan-period">в месяц</div>
-        <div class="plan-vat">в т. ч. НДС 22% — 270 ₽</div>
+        <div class="plan-vat">в т. ч. НДС 22% — 700 ₽</div>
         <hr class="plan-divider">
         <ul class="plan-features">
-          <li>Mac mini M2, 8 ГБ RAM</li>
-          <li>100 ГБ SSD</li>
-          <li>SSH-доступ</li>
-          <li>1 активный пользователь</li>
-          <li>100 Мбит/с канал</li>
-          <li class="dim">GitHub Actions runner</li>
-          <li class="dim">Снапшоты</li>
-          <li class="dim">Приоритетная поддержка</li>
+          <li>Mac mini M4, 16 ГБ RAM</li>
+          <li>256 ГБ SSD</li>
+          <li>SSH + VNC-доступ</li>
+          <li>GitHub Actions runner</li>
+          <li>Поддержка в Telegram</li>
+          <li>Отмена в любой момент</li>
         </ul>
-        <a href="/pay?plan=starter" class="plan-btn plan-btn-secondary">Выбрать Starter</a>
+        <a href="/pay?plan=monthly" class="plan-btn plan-btn-secondary">Выбрать →</a>
       </div>
 
-      <!-- DEVELOPER (popular) -->
+      <!-- ГОДОВОЙ (popular) -->
       <div class="plan popular">
-        <div class="plan-badge">★ Популярный</div>
-        <div class="plan-name">Developer</div>
-        <div class="plan-price"><sup>₽</sup>2 900</div>
-        <div class="plan-period">в месяц</div>
-        <div class="plan-vat">в т. ч. НДС 22% — 521 ₽</div>
+        <div class="plan-badge">🔥 Выгоднее всего</div>
+        <div class="plan-name">Годовой</div>
+        <div class="plan-price"><sup>₽</sup>3 120</div>
+        <div class="plan-period">в месяц · 37 440 ₽/год</div>
+        <div class="plan-vat">скидка 20% · в т. ч. НДС 22%</div>
         <hr class="plan-divider">
         <ul class="plan-features">
-          <li>Mac mini M2, 16 ГБ RAM</li>
+          <li>Mac mini M4, 16 ГБ RAM</li>
+          <li>256 ГБ SSD</li>
+          <li>SSH + VNC-доступ</li>
+          <li>GitHub Actions runner</li>
+          <li>Поддержка в Telegram</li>
+          <li>Экономия 9 360 ₽ в год</li>
+        </ul>
+        <a href="/pay?plan=annual" class="plan-btn plan-btn-primary">Выбрать →</a>
+      </div>
+
+      <!-- СУТОЧНЫЙ -->
+      <div class="plan">
+        <div class="plan-name">Суточный</div>
+        <div class="plan-price"><sup>₽</sup>169</div>
+        <div class="plan-period">в сутки</div>
+        <div class="plan-vat">в т. ч. НДС 22% — 30 ₽</div>
+        <hr class="plan-divider">
+        <ul class="plan-features">
+          <li>Mac mini M4, 16 ГБ RAM</li>
+          <li>256 ГБ SSD</li>
+          <li>SSH + VNC-доступ</li>
+          <li>GitHub Actions runner</li>
+          <li>Поддержка в Telegram</li>
+          <li>Идеально для тестов</li>
+        </ul>
+        <a href="/pay?plan=daily" class="plan-btn plan-btn-secondary">Выбрать →</a>
+      </div>
+
+      <!-- ПОЧАСОВОЙ -->
+      <div class="plan">
+        <div class="plan-name">Почасовой</div>
+        <div class="plan-price"><sup>₽</sup>9</div>
+        <div class="plan-period">в час · мин. 4 часа (36 ₽)</div>
+        <div class="plan-vat">в т. ч. НДС 22% · для DevOps</div>
+        <hr class="plan-divider">
+        <ul class="plan-features">
+          <li>Mac mini M4, 16 ГБ RAM</li>
           <li>256 ГБ SSD</li>
           <li>SSH-доступ</li>
-          <li>2 активных пользователя</li>
-          <li>300 Мбит/с канал</li>
-          <li>GitHub Actions runner</li>
-          <li>Еженедельные снапшоты</li>
-          <li class="dim">Приоритетная поддержка</li>
+          <li>CI/CD runner</li>
+          <li>Для разовых сборок</li>
+          <li>Минимум 4 часа</li>
         </ul>
-        <a href="/pay?plan=developer" class="plan-btn plan-btn-primary">Выбрать Developer</a>
-      </div>
-
-      <!-- PRO -->
-      <div class="plan">
-        <div class="plan-name">Pro</div>
-        <div class="plan-price"><sup>₽</sup>4 900</div>
-        <div class="plan-period">в месяц</div>
-        <div class="plan-vat">в т. ч. НДС 22% — 882 ₽</div>
-        <hr class="plan-divider">
-        <ul class="plan-features">
-          <li>Mac mini M2 Max, 32 ГБ RAM</li>
-          <li>512 ГБ SSD</li>
-          <li>SSH + VNC-доступ</li>
-          <li>5 активных пользователей</li>
-          <li>1 Гбит/с канал</li>
-          <li>GitHub/GitLab runner</li>
-          <li>Ежедневные снапшоты</li>
-          <li>Приоритетная поддержка 24/7</li>
-        </ul>
-        <a href="/pay?plan=pro" class="plan-btn plan-btn-secondary">Выбрать Pro</a>
+        <a href="/pay?plan=hourly" class="plan-btn plan-btn-secondary">Выбрать →</a>
       </div>
 
     </div>
@@ -613,9 +625,10 @@
           <label for="plan">Тариф</label>
           <select name="plan" id="plan" required>
             <option value="">— Выберите тариф —</option>
-            <option value="starter">Starter — 1 500 ₽/мес (с НДС)</option>
-            <option value="developer">Developer — 2 900 ₽/мес (с НДС)</option>
-            <option value="pro">Pro — 4 900 ₽/мес (с НДС)</option>
+            <option value="monthly">Месячный — 3 900 ₽/мес (с НДС)</option>
+            <option value="annual">Годовой — 37 440 ₽/год (3 120 ₽/мес, -20%)</option>
+            <option value="daily">Суточный — 169 ₽/сут (с НДС)</option>
+            <option value="hourly">Почасовой — 9 ₽/час, мин. 4 часа</option>
           </select>
         </div>
         <div class="form-group">
