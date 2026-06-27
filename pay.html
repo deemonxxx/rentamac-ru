@@ -63,7 +63,8 @@
     .plan-label-left { display: flex; flex-direction: column; }
     .plan-label-name { font-size: 15px; font-weight: 700; color: var(--text); }
     .plan-label-desc { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
-    .plan-label-price { font-size: 16px; font-weight: 800; color: var(--text); }
+    .plan-label-price { font-size: 16px; font-weight: 800; color: var(--text); text-align: right; }
+    .plan-label-price small { display: block; font-size: 11px; font-weight: 500; color: var(--text-muted); margin-top: 2px; }
 
     /* FORM */
     .form-group { margin-bottom: 16px; }
@@ -158,35 +159,44 @@
   <div class="pay-form-col">
     <div class="card">
       <h2>Оплата аренды</h2>
-      <p class="subtitle">ЮKassa — банковские карты, СБП, ЮMoney, МИР</p>
+      <p class="subtitle">Mac mini M4 · 16 ГБ · 256 ГБ SSD — выберите период</p>
 
       <!-- PLAN SELECTION -->
       <div class="plan-selector" id="planSelector">
-        <input type="radio" name="plan" id="plan-starter" value="starter" class="plan-option">
-        <label for="plan-starter" class="plan-label">
+        <input type="radio" name="plan" id="plan-monthly" value="monthly" class="plan-option">
+        <label for="plan-monthly" class="plan-label">
           <div class="plan-label-left">
-            <span class="plan-label-name">Starter</span>
-            <span class="plan-label-desc">Mac mini M2 · 8 ГБ · 100 ГБ SSD</span>
+            <span class="plan-label-name">Месячный</span>
+            <span class="plan-label-desc">Оплата каждый месяц · отмена в любой момент</span>
           </div>
-          <span class="plan-label-price">1 500 ₽</span>
+          <span class="plan-label-price"><small>в месяц</small>4 290 ₽</span>
         </label>
 
-        <input type="radio" name="plan" id="plan-developer" value="developer" class="plan-option" checked>
-        <label for="plan-developer" class="plan-label">
+        <input type="radio" name="plan" id="plan-annual" value="annual" class="plan-option" checked>
+        <label for="plan-annual" class="plan-label">
           <div class="plan-label-left">
-            <span class="plan-label-name">Developer ★</span>
-            <span class="plan-label-desc">Mac mini M2 · 16 ГБ · 256 ГБ SSD</span>
+            <span class="plan-label-name">Годовой 🔥</span>
+            <span class="plan-label-desc">Экономия 15% · 43 760 ₽/год</span>
           </div>
-          <span class="plan-label-price">2 900 ₽</span>
+          <span class="plan-label-price"><small>в месяц</small>3 647 ₽</span>
         </label>
 
-        <input type="radio" name="plan" id="plan-pro" value="pro" class="plan-option">
-        <label for="plan-pro" class="plan-label">
+        <input type="radio" name="plan" id="plan-daily" value="daily" class="plan-option">
+        <label for="plan-daily" class="plan-label">
           <div class="plan-label-left">
-            <span class="plan-label-name">Pro</span>
-            <span class="plan-label-desc">Mac mini M2 Max · 32 ГБ · 512 ГБ SSD</span>
+            <span class="plan-label-name">Суточный</span>
+            <span class="plan-label-desc">Для коротких задач и тестов</span>
           </div>
-          <span class="plan-label-price">4 900 ₽</span>
+          <span class="plan-label-price"><small>в сутки</small>186 ₽</span>
+        </label>
+
+        <input type="radio" name="plan" id="plan-hourly" value="hourly" class="plan-option">
+        <label for="plan-hourly" class="plan-label">
+          <div class="plan-label-left">
+            <span class="plan-label-name">Почасовой</span>
+            <span class="plan-label-desc">Минимум 4 часа · для DevOps и сборок</span>
+          </div>
+          <span class="plan-label-price"><small>в час</small>10 ₽</span>
         </label>
       </div>
 
@@ -268,12 +278,16 @@
     <div class="card">
       <h2 style="font-size:16px;margin-bottom:20px;">Детали заказа</h2>
       <div class="summary-item">
-        <span class="summary-item-label">Сервис</span>
-        <span class="summary-item-value">RentAMac — аренда Mac mini</span>
+        <span class="summary-item-label">Конфигурация</span>
+        <span class="summary-item-value">Mac mini M4 · 16 ГБ · 256 ГБ SSD</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-item-label">Тариф</span>
+        <span class="summary-item-value" id="summaryPlan">Годовой</span>
       </div>
       <div class="summary-item">
         <span class="summary-item-label">Период</span>
-        <span class="summary-item-value">1 месяц (автопродление)</span>
+        <span class="summary-item-value" id="summaryPeriod">1 год (автопродление)</span>
       </div>
       <div class="summary-item">
         <span class="summary-item-label">НДС</span>
@@ -333,26 +347,35 @@
 </footer>
 
 <script>
+  // Тарифы — соответствуют лендингу rentamac.ru
   const PLANS = {
-    starter:   { name: 'Starter',   total: 1500 },
-    developer: { name: 'Developer', total: 2900 },
-    pro:       { name: 'Pro',       total: 4900 },
+    monthly: { name: 'Месячный', total: 4290, period: '1 месяц', suffix: '/мес' },
+    annual:  { name: 'Годовой',  total: 43760, period: '1 год', suffix: '/год', monthly: 3647 },
+    daily:   { name: 'Суточный', total: 186, period: '1 сутки', suffix: '/сут' },
+    hourly:  { name: 'Почасовой', total: 10, period: '1 час', suffix: '/час', note: 'мин. 4 часа (40 ₽)' },
   };
 
   function getSelectedPlan() {
-    return document.querySelector('input[name="plan"]:checked')?.value || 'developer';
+    return document.querySelector('input[name="plan"]:checked')?.value || 'annual';
   }
 
   function updateVat() {
-    const plan = PLANS[getSelectedPlan()];
+    const key = getSelectedPlan();
+    const plan = PLANS[key];
     if (!plan) return;
-    // НДС 22%: сумма без НДС = total / 1.22, НДС = total - base
+
     const total = plan.total;
     const base = Math.round(total / 1.22);
     const vat = total - base;
+
     document.getElementById('vatBase').textContent   = base.toLocaleString('ru-RU') + ' ₽';
     document.getElementById('vatAmount').textContent = vat.toLocaleString('ru-RU') + ' ₽';
     document.getElementById('vatTotal').textContent  = total.toLocaleString('ru-RU') + ' ₽';
+
+    // Update summary sidebar
+    document.getElementById('summaryPlan').textContent = plan.name;
+    const periodText = plan.note ? plan.period + ' · ' + plan.note : plan.period;
+    document.getElementById('summaryPeriod').textContent = periodText;
   }
 
   document.querySelectorAll('input[name="plan"]').forEach(r => r.addEventListener('change', updateVat));
@@ -372,6 +395,7 @@
     if (!email) { alert('Пожалуйста, укажите email.'); return; }
 
     // TODO: вызвать ваш backend POST /api/create-payment
+    // body: { plan, email, fullname, telegram }
     // Получить confirmation_token и инициализировать YooMoneyCheckoutWidget
     alert(
       'Backend не подключён.\n\n' +
