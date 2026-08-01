@@ -163,40 +163,31 @@
 
       <!-- PLAN SELECTION -->
       <div class="plan-selector" id="planSelector">
-        <input type="radio" name="plan" id="plan-monthly" value="monthly" class="plan-option">
-        <label for="plan-monthly" class="plan-label">
-          <div class="plan-label-left">
-            <span class="plan-label-name">Месячный</span>
-            <span class="plan-label-desc">Оплата каждый месяц · отмена в любой момент</span>
-          </div>
-          <span class="plan-label-price"><small>в месяц</small>4 290 ₽</span>
-        </label>
-
-        <input type="radio" name="plan" id="plan-annual" value="annual" class="plan-option" checked>
-        <label for="plan-annual" class="plan-label">
-          <div class="plan-label-left">
-            <span class="plan-label-name">Годовой 🔥</span>
-            <span class="plan-label-desc">Экономия 15% · 43 760 ₽/год</span>
-          </div>
-          <span class="plan-label-price"><small>в месяц</small>3 647 ₽</span>
-        </label>
-
         <input type="radio" name="plan" id="plan-daily" value="daily" class="plan-option">
         <label for="plan-daily" class="plan-label">
           <div class="plan-label-left">
             <span class="plan-label-name">Суточный</span>
             <span class="plan-label-desc">Для коротких задач и тестов</span>
           </div>
-          <span class="plan-label-price"><small>в сутки</small>186 ₽</span>
+          <span class="plan-label-price"><small>в сутки</small>350 ₽</span>
         </label>
 
-        <input type="radio" name="plan" id="plan-hourly" value="hourly" class="plan-option">
-        <label for="plan-hourly" class="plan-label">
+        <input type="radio" name="plan" id="plan-weekly" value="weekly" class="plan-option" checked>
+        <label for="plan-weekly" class="plan-label">
           <div class="plan-label-left">
-            <span class="plan-label-name">Почасовой</span>
-            <span class="plan-label-desc">Минимум 4 часа · для DevOps и сборок</span>
+            <span class="plan-label-name">Недельный 🔥</span>
+            <span class="plan-label-desc">Скидка 14% · экономия 350 ₽</span>
           </div>
-          <span class="plan-label-price"><small>в час</small>10 ₽</span>
+          <span class="plan-label-price"><small>в неделю</small>2 100 ₽</span>
+        </label>
+
+        <input type="radio" name="plan" id="plan-monthly" value="monthly" class="plan-option">
+        <label for="plan-monthly" class="plan-label">
+          <div class="plan-label-left">
+            <span class="plan-label-name">Месячный</span>
+            <span class="plan-label-desc">Скидка 30% · экономия 3 150 ₽</span>
+          </div>
+          <span class="plan-label-price"><small>в месяц</small>7 350 ₽</span>
         </label>
       </div>
 
@@ -349,18 +340,16 @@
 <script>
   // Тарифы — соответствуют лендингу rentamac.ru
   const PLANS = {
-    monthly: { name: 'Месячный', total: 4290, period: '1 месяц', suffix: '/мес' },
-    annual:  { name: 'Годовой',  total: 43760, period: '1 год', suffix: '/год', monthly: 3647 },
-    daily:   { name: 'Суточный', total: 186, period: '1 сутки', suffix: '/сут' },
-    hourly:  { name: 'Почасовой', total: 10, period: '1 час', suffix: '/час', note: 'мин. 4 часа (40 ₽)' },
+    daily:   { name: 'Суточный',  total: 350,  period: '1 сутки',  suffix: '/сут' },
+    weekly:  { name: 'Недельный', total: 2100, period: '1 неделю', suffix: '/нед' },
+    monthly: { name: 'Месячный',  total: 7350, period: '1 месяц',  suffix: '/мес' },
   };
-
-  function getSelectedPlan() {
-    return document.querySelector('input[name="plan"]:checked')?.value || 'annual';
+  function getPlan() {
+    return document.querySelector('input[name="plan"]:checked')?.value || 'weekly';
   }
 
   function updateVat() {
-    const key = getSelectedPlan();
+    const key = getPlan();
     const plan = PLANS[key];
     if (!plan) return;
 
@@ -390,7 +379,7 @@
   }
 
   function initPayment() {
-    const plan = getSelectedPlan();
+    const plan = getPlan();
     const email = document.getElementById('email').value;
     if (!email) { alert('Пожалуйста, укажите email.'); return; }
 
