@@ -1,10 +1,9 @@
 // Cloudflare Pages Function: POST /api/create-payment
-// Принимает JSON с данными формы, создаёт платёж через ЮKassa API
+// Отправляет заявку в Telegram-бот
 
 export async function onRequestPost(context) {
   const { request, env } = context;
 
-  // CORS headers
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
@@ -17,9 +16,9 @@ export async function onRequestPost(context) {
 
     // Валидация
     const PLANS = {
-      daily:   { amount: '350.00',  description: 'Mac mini M4 — суточная аренда' },
-      weekly:  { amount: '2100.00', description: 'Mac mini M4 — недельная аренда' },
-      monthly: { amount: '7350.00', description: 'Mac mini M4 — месячная аренда' },
+      daily:   { label: 'Суточный — 350 ₽/сут',  amount: '350 ₽' },
+      weekly:  { label: 'Недельный — 2 100 ₽/нед', amount: '2 100 ₽' },
+      monthly: { label: 'Месячный — 7 350 ₽/мес',  amount: '7 350 ₽' },
     };
 
     if (!plan || !PLANS[plan]) {
@@ -29,75 +28,71 @@ export async function onRequestPost(context) {
       });
     }
 
-    if (!email) {
-      return new Response(JSON.stringify({ error: 'Email обязателен' }), {
+    if (!name || !email) {
+      return new Response(JSON.stringify({ error: 'Имя и email обязательны' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json', ...corsHeaders },
       });
     }
 
-    // TODO: Когда ЮKassa будет подключена — раскомментировать ниже
-    // const shopId = env.YOOKASSA_SHOP_ID;
-    // const secretKey = env.YOOKASSA_SECRET_KEY;
-    //
-    // const idempotenceKey = crypto.randomUUID();
-    // const yukassaResponse = await fetch('https://api.yookassa.ru/v3/payments', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     'Idempotence-Key': idempotenceKey,
-    //     'Authorization': 'Basic ' + btoa(`${shopId}:${secretKey}`),
-    //   },
-    //   body: JSON.stringify({
-    //     amount: { value: PLANS[plan].amount, currency: 'RUB' },
-    //     confirmation: {
-    //       type: 'redirect',
-    //       return_url: `https://rentamac.ru/pay/success`,
-    //     },
-    //     capture: true,
-    //     description: PLANS[plan].description,
-    //     metadata: { plan, name, email, telegram, comment },
-    //     receipt: {
-    //       customer: { email },
-    //       items: [{
-    //         description: PLANS[plan].description,
-    //         quantity: '1.00',
-    //         amount: { value: PLANS[plan].amount, currency: 'RUB' },
-    //         vat_code: 1, // НДС 22%
-    //       }],
-    //     },
-    //   }),
-    // });
-    //
-    // if (!yukassaResponse.ok) {
-    //   const err = await yukassaResponse.text();
-    //   return new Response(JSON.stringify({ error: 'Ошибка ЮKassa', details: err }), {
-    //     status: 502,
-    //     headers: { 'Content-Type': 'application/json', ...corsHeaders },
-    //   });
-    // }
-    //
-    // const payment = await yukassaResponse.json();
-    // return new Response(JSON.stringify({
-    //   confirmation_token: payment.confirmation.confirmation_token,
-    //   payment_id: payment.id,
-    // }), {
-    //   status: 200,
-    //   headers: { 'Content-Type': 'application/json', ...corsHeaders },
-    // });
+    // Формируем сообщение для Telegram
+    const lines = [
+      `🆕 *Новая заявка на аренду*`,
+      ``,
+      `📋 *Тариф:* ${PLANS[plan].label}`,
+      `💰 *Сумма:* ${PLANS[plan].amount}`,
+      `👤 *Имя:* ${escapeMd(name)}`,
+      `📧 *Email:* ${escapeMd(email)}`,
+    ];
 
-    // Заглушка — пока ЮKassa не подключена
+    if (telegram) lines.push(`💬 *Telegram:* ${escapeMd(telegram)}`);
+    if (comment)  lines.push(`📝 *Комментарий:* ${escapeMd(comment)}`);
+
+    lines.push(``, `⏰ ${new Date().toLocaleString('ru-RU', { timeZone: 'Europe/Moscow' })} МСК`);
+
+    const text = lines.join('\n');
+
+    // Отправляем в Telegram
+    const botToken = env.TELEGRAM_BOT_TOKEN;
+    const chatId = env.TELEGRAM_CHAT_ID;
+
+    if (!botToken || !chatId) {
+      console.error('TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID not set');
+      return new Response(JSON.stringify({ error: 'Сервис временно недоступен' }), {
+        status: 503,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders },
+      });
+    }
+
+    const tgResp = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text,
+        parse_mode: 'Markdown',
+      }),
+    });
+
+    if (!tgResp.ok) {
+      const err = await tgResp.text();
+      console.error('Telegram error:', err);
+      return new Response(JSON.stringify({ error: 'Ошибка отправки' }), {
+        status: 502,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders },
+      });
+    }
+
     return new Response(JSON.stringify({
-      status: 'pending',
-      message: 'Заявка получена. Мы свяжемся с вами для оплаты.',
-      plan,
-      email,
+      ok: true,
+      message: 'Заявка отправлена! Мы свяжемся с вами в течение 15 минут.',
     }), {
       status: 200,
       headers: { 'Content-Type': 'application/json', ...corsHeaders },
     });
 
   } catch (err) {
+    console.error('Error:', err);
     return new Response(JSON.stringify({ error: 'Ошибка сервера' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json', ...corsHeaders },
@@ -105,7 +100,11 @@ export async function onRequestPost(context) {
   }
 }
 
-// Обработка CORS preflight
+// Экранирование спецсимволов Markdown
+function escapeMd(text) {
+  return text.replace(/([_*\[\]()~`>#+\-=|{}.!\\])/g, '\\$1');
+}
+
 export async function onRequestOptions() {
   return new Response(null, {
     status: 204,

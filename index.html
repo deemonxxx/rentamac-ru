@@ -715,8 +715,15 @@
       //   return;
       // }
 
-      // Пока заглушка — показать сообщение
-      alert(result.message || 'Заявка отправлена! Мы свяжемся с вами.');
+      // Показать сообщение об успехе
+      const formWrap = document.querySelector('.form-wrap');
+      formWrap.innerHTML = `
+        <div style="text-align:center;padding:40px 0;">
+          <div style="font-size:48px;margin-bottom:16px;">✅</div>
+          <h3 style="font-size:20px;margin-bottom:8px;">Заявка отправлена!</h3>
+          <p style="color:var(--text-muted);font-size:15px;">Мы свяжемся с вами в течение 15 минут.</p>
+        </div>
+      `;
 
     } catch (err) {
       alert('Ошибка сети. Попробуйте позже.');
