@@ -615,7 +615,7 @@
     <div class="form-wrap">
       <h3>Заявка на аренду</h3>
       <p>Выберите тариф — мы свяжемся и оформим доступ.</p>
-      <form action="/pay" method="get">
+      <form id="orderForm">
         <div class="form-group">
           <label for="plan">Тариф</label>
           <select name="plan" id="plan" required>
@@ -641,7 +641,7 @@
           <label for="comment">Комментарий (необязательно)</label>
           <textarea id="comment" name="comment" placeholder="Расскажите о задаче — подберём оптимальную конфигурацию"></textarea>
         </div>
-        <button type="submit" class="form-submit">Перейти к оплате →</button>
+        <button type="submit" class="form-submit" id="submitBtn">Перейти к оплате →</button>
         <p class="form-note">Нажимая кнопку, вы соглашаетесь с <a href="#">условиями оферты</a>. Оплата через ЮKassa. Чек будет направлен на email в соответствии с 54-ФЗ. НДС 22%.</p>
       </form>
     </div>
@@ -678,6 +678,53 @@
   if (params.get('plan')) {
     document.getElementById('plan').value = params.get('plan');
   }
+
+  // Order form — POST через fetch (данные не в URL)
+  document.getElementById('orderForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    const origText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Отправка...';
+
+    const data = {
+      plan:    document.getElementById('plan').value,
+      name:    document.getElementById('name').value,
+      email:   document.getElementById('email').value,
+      telegram: document.getElementById('telegram').value,
+      comment: document.getElementById('comment').value,
+    };
+
+    try {
+      const resp = await fetch('/api/create-payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      const result = await resp.json();
+
+      if (!resp.ok) {
+        alert(result.error || 'Ошибка отправки');
+        return;
+      }
+
+      // Когда ЮKassa будет подключена — редирект на /pay с токеном:
+      // if (result.confirmation_token) {
+      //   window.location.href = '/pay?token=' + result.confirmation_token;
+      //   return;
+      // }
+
+      // Пока заглушка — показать сообщение
+      alert(result.message || 'Заявка отправлена! Мы свяжемся с вами.');
+
+    } catch (err) {
+      alert('Ошибка сети. Попробуйте позже.');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = origText;
+    }
+  });
 </script>
 </body>
 </html>
