@@ -52,7 +52,7 @@ export async function onRequestPost(context) {
 
     const text = lines.join('\n');
 
-    // Отправляем в Telegram
+    // Отправляем в Telegram (только владельцу)
     const botToken = env.TELEGRAM_BOT_TOKEN;
     const chatId = env.TELEGRAM_CHAT_ID;
 
@@ -60,6 +60,16 @@ export async function onRequestPost(context) {
       console.error('TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID not set');
       return new Response(JSON.stringify({ error: 'Сервис временно недоступен' }), {
         status: 503,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders },
+      });
+    }
+
+    // Защита: отправляем только в зафиксированный чат владельца
+    const OWNER_CHAT_ID = '273203546';
+    if (chatId !== OWNER_CHAT_ID) {
+      console.error('CHAT_ID mismatch:', chatId);
+      return new Response(JSON.stringify({ error: 'Ошибка конфигурации' }), {
+        status: 500,
         headers: { 'Content-Type': 'application/json', ...corsHeaders },
       });
     }
