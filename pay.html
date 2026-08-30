@@ -87,20 +87,6 @@
     .vat-row span:first-child { color: var(--text-muted); }
     .vat-label-small { font-size: 11px; color: var(--text-dim); margin-top: 8px; }
 
-    /* YUKASSA WIDGET PLACEHOLDER */
-    .yukassa-widget-placeholder {
-      background: var(--bg3); border: 2px dashed var(--border);
-      border-radius: var(--radius-sm); padding: 28px 20px;
-      text-align: center; margin: 20px 0;
-    }
-    .yukassa-widget-placeholder .placeholder-icon { font-size: 32px; margin-bottom: 10px; }
-    .yukassa-widget-placeholder p { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
-    .yukassa-widget-placeholder code {
-      display: inline-block; background: var(--bg); border: 1px solid var(--border);
-      border-radius: 4px; padding: 2px 7px; font-size: 12px; color: var(--accent);
-      margin-top: 8px;
-    }
-
     .btn-pay {
       width: 100%; padding: 15px; background: var(--accent); color: #fff; border: none;
       border-radius: var(--radius-sm); font-size: 16px; font-weight: 700;
@@ -159,7 +145,7 @@
   <div class="pay-form-col">
     <div class="card">
       <h2>Оплата аренды</h2>
-      <p class="subtitle">Mac mini M4 · 16 ГБ · 256 ГБ SSD — выберите период</p>
+      <p class="subtitle">Mac mini M4 · 16 ГБ · 256 ГБ SSD — выберите период и оставьте заявку</p>
 
       <!-- PLAN SELECTION -->
       <div class="plan-selector" id="planSelector">
@@ -224,40 +210,14 @@
 
       <!--
         ====================================================
-        ЮKassa WIDGET — ИНТЕГРАЦИЯ
-        ====================================================
-        1. Зарегистрируйтесь на https://yookassa.ru/
-        2. Создайте магазин, получите shopId и secretKey
-        3. В личном кабинете: Интеграция → HTTP API
-        4. Подключите онлайн-кассу (54-ФЗ):
-           — В ЛК выберите "Фискализация" → подключите кассу
-           — Или используйте кассу ЮKassa (встроенная)
-        5. Подключите скрипт виджета (пример ниже):
-           <script src="https://yookassa.ru/checkout-widget/v1/checkout-widget.js"></script>
-        6. Создайте платёж через ваш backend (POST /v3/payments),
-           получите confirmation.confirmation_token
-        7. Инициализируйте виджет:
-           const checkout = new window.YooMoneyCheckoutWidget({
-             confirmation_token: '<TOKEN_FROM_BACKEND>',
-             return_url: 'https://rentamac.ru/pay/success',
-             customization: { colors: { controlPrimary: '#f5820d' } },
-             error_callback(error) { console.error(error); }
-           });
-           checkout.render('payment-form');
+        ОПЛАТА — заявка отправляется в Telegram
         ====================================================
       -->
-      <div class="yukassa-widget-placeholder">
-        <div class="placeholder-icon">🏦</div>
-        <p><strong>Здесь появится виджет ЮKassa</strong></p>
-        <p>После создания платежа через backend и получения <code>confirmation_token</code> — виджет рендерится в этом блоке.</p>
-      </div>
-      <div id="payment-form"></div>
-
-      <button class="btn-pay" onclick="initPayment()">
-        <span>🔒</span> Оплатить через ЮKassa
+      <button class="btn-pay" onclick="submitOrder()">
+        <span>📨</span> Отправить заявку
       </button>
       <p class="pay-disclaimer">
-        Оплата защищена ЮKassa. Чек будет направлен на email в соответствии с 54-ФЗ.
+        После отправки заявки мы свяжемся с вами в Telegram для оплаты и настройки доступа.
         Нажимая кнопку, вы принимаете <a href="#">публичную оферту</a>.
         ООО «RentAMac», НДС 22% включён в стоимость.
       </p>
@@ -286,11 +246,11 @@
       </div>
       <div class="summary-item">
         <span class="summary-item-label">Оплата</span>
-        <span class="summary-item-value">ЮKassa (карты, СБП, МИР)</span>
+        <span class="summary-item-value">По договорённости (карта, СБП, крипто)</span>
       </div>
       <div class="summary-item">
-        <span class="summary-item-label">Фискализация</span>
-        <span class="summary-item-value">Чек ОФД по 54-ФЗ</span>
+        <span class="summary-item-label">Документы</span>
+        <span class="summary-item-value">Акт, счёт по запросу</span>
       </div>
       <div class="summary-item">
         <span class="summary-item-label">Доступ</span>
@@ -298,34 +258,24 @@
       </div>
     </div>
 
-    <!-- SETUP GUIDE FOR DEVELOPERS -->
+    <!-- HOW IT WORKS -->
     <div class="card" style="margin-top:16px;">
       <div class="setup-guide">
-        <h3>Инструкция по подключению ЮKassa</h3>
+        <h3>Как это работает</h3>
 
         <div class="setup-step">
           <div class="step-num">1</div>
-          <p>Зарегистрируйтесь на <a href="https://yookassa.ru" target="_blank">yookassa.ru</a> → создайте магазин → получите <code>shopId</code> и <code>secretKey</code> в разделе «Интеграция».</p>
+          <p>Выберите тариф и заполните форму — отправьте заявку.</p>
         </div>
 
         <div class="setup-step">
           <div class="step-num">2</div>
-          <p>Для соответствия <strong>54-ФЗ</strong> в ЛК включите «Фискализация» → подключите встроенную кассу ЮKassa или укажите вашу кассу (АТОЛ, Эвотор и др.).</p>
+          <p>Мы свяжемся с вами в Telegram в течение 15 минут для уточнения деталей.</p>
         </div>
 
         <div class="setup-step">
           <div class="step-num">3</div>
-          <p>На бэкенде создайте платёж: <code>POST https://api.yookassa.ru/v3/payments</code> — в ответе получите <code>confirmation_token</code>.</p>
-        </div>
-
-        <div class="setup-step">
-          <div class="step-num">4</div>
-          <p>Подключите виджет:<br><code>&lt;script src="checkout-widget.js"&gt;</code><br>Инициализируйте с токеном — виджет сам соберёт платёжные данные.</p>
-        </div>
-
-        <div class="setup-step">
-          <div class="step-num">5</div>
-          <p>Настройте webhook в ЛК ЮKassa: укажите URL <code>/webhook/yukassa</code> вашего сервера. Обработчик: <code>webhook-yukassa.js</code>.</p>
+          <p>После оплаты получите SSH-ключи и данные для подключения к Mac mini.</p>
         </div>
       </div>
     </div>
@@ -378,20 +328,53 @@
     if (radio) { radio.checked = true; updateVat(); }
   }
 
-  function initPayment() {
+  async function submitOrder() {
     const plan = getPlan();
+    const name = document.getElementById('fullname').value;
     const email = document.getElementById('email').value;
+    const telegram = document.getElementById('telegram').value;
+
+    if (!name) { alert('Пожалуйста, укажите имя.'); return; }
     if (!email) { alert('Пожалуйста, укажите email.'); return; }
 
-    // TODO: вызвать ваш backend POST /api/create-payment
-    // body: { plan, email, fullname, telegram }
-    // Получить confirmation_token и инициализировать YooMoneyCheckoutWidget
-    alert(
-      'Backend не подключён.\n\n' +
-      'Следующий шаг: создайте платёж на сервере через ЮKassa API,\n' +
-      'получите confirmation_token и инициализируйте виджет.\n\n' +
-      'Смотри: backend/webhook-yukassa.js'
-    );
+    const btn = document.querySelector('.btn-pay');
+    const origText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span>⏳</span> Отправка...';
+
+    try {
+      const resp = await fetch('/api/create-payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan, name, email, telegram }),
+      });
+
+      const result = await resp.json();
+
+      if (!resp.ok) {
+        alert(result.error || 'Ошибка отправки');
+        return;
+      }
+
+      // Показать сообщение об успехе
+      const card = document.querySelector('.pay-form-col .card');
+      card.innerHTML = `
+        <div style="text-align:center;padding:60px 0;">
+          <div style="font-size:64px;margin-bottom:20px;">✅</div>
+          <h2 style="font-size:24px;margin-bottom:12px;">Заявка отправлена!</h2>
+          <p style="color:var(--text-muted);font-size:16px;line-height:1.6;">
+            Мы свяжемся с вами в Telegram в течение 15 минут.<br>
+            Проверьте сообщения от бота.
+          </p>
+        </div>
+      `;
+
+    } catch (err) {
+      alert('Ошибка сети. Попробуйте позже.');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = origText;
+    }
   }
 </script>
 </body>
